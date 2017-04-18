@@ -1,9 +1,10 @@
+`timescale 1ns/1ps
 module main(
 	input clk,
 	input rst_n
 );
 
-wire [31:0] Instr, PC, ALUResult, WriteData, ReadData, RD1, RD2, SrcA, SrcB, PCPlus, SignImm;
+wire [31:0] Instr, PC, ALUResult, WriteData, ReadData, RD1, RD2, SrcA, SrcB, PCPlus, SigImm, Result;
 wire [4:0] Regfile_A3;
 wire [3:0] ALUOp;
 wire ALUSrc, MemtoReg, RegDst, Zero;
@@ -18,12 +19,12 @@ and branch(
 );
 
 textrom text_rom(
-    .a(PC),
+    .a(PC[11:2]),
     .spo(Instr)
 );
  
 dataram data_ram (
-  .a(ALUResult),        // input wire [9 : 0] a
+  .a(ALUResult[11:2]),        // input wire [9 : 0] a
   .d(WriteData),        // input wire [31 : 0] d
   .clk(clk),    // input wire clk
   .we(MemWrite),      // input wire we
@@ -41,13 +42,13 @@ ALU mainALU (
 Ext SignExt(
     1'b1,
     Instr[15:0],
-    SignImm
+    SigImm
 );
 
 pc prog_cnt(
     clk,
 	PCSrc,
-	SignImm,
+	SigImm,
 	Instr[25:0],
 	Jump,
 
